@@ -6,7 +6,7 @@ module Sortabl
 			# Uses fontawesome as default icons
 			# <th 'data-sortable': 'attribute_direction'>Name <i class='fa fa-...'></th>
 			#
-			def render_th name, attribute, *args
+			def sortabl_th name, attribute, *args
 
 				# To provide full path with all given params
 				# make a copy of incoming params and override sort_param only

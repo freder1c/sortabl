@@ -18,13 +18,13 @@ gem 'sortabl'
 @posts = Post.sortabl(sort_by: params[:sort])
 ```
 
-And that's it! Records will be sorted by permitted parameter `:sort`. If parameter `:sort` isn't permitted, records will be sorted by primary key. The `default` key can be also set as argument. Like:
+And that's it! Records will be sorted by permitted parameter `:sort`. If parameter `:sort` isn't permitted, records will be sorted by primary key. If you don't want to sort by primary key by default, you can set another one by:
 
 ```ruby
 @posts = Post.sortabl(sort_by: params[:sort], default: :author)
 ```
 
-Permitted values can be every attribute of model class followed by `_asc` or `_desc`. For example: `sort: :author_asc`
+Permitted values can be an attribute of model class, followed by `_asc` or `_desc`. For example: `sort: :author_asc`
 If there's an attribute permitted which doesn't exist in model, it falls back to sort by `default` key. Attributes can be limited with `only` and `except`. For example:
 
 ```ruby
@@ -41,7 +41,7 @@ There's also a view helper for rendering table heads:
 ```erb
 <table>
 	<thead>
-		<%= render_th 'Author', :author, id: 'author-column', class: 'author-column' %>
+		<%= sortabl_th 'Author', :author, id: 'author-column', class: 'author-column' %>
 	</thead>
 	<tbody>
 		...
