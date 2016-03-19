@@ -14,15 +14,25 @@ gem 'sortabl'
 
 ### Controller
 
+#### Default
+
 ```ruby
 @posts = Post.sortabl(sort_by: params[:sortabl])
 ```
 
-And that's it! Records will be sorted by permitted parameter `:sortabl`. If parameter `:sortabl` isn't permitted, records will be sorted by primary key. If you don't want to sort by primary key by default, you can set another one by:
+And that's it! Records will be sorted by permitted parameter `:sortabl`. If parameter `:sortabl` isn't permitted, records will be sorted by primary key. If you don't want to sort by primary key as default, you can set another one by:
 
 ```ruby
-@posts = Post.sortabl(sort_by: params[:sortabl], default: :author)
+@posts = Post.sortabl(sort_by: params[:sortabl], default: 'author asc')
 ```
+
+Even default multiple columns sort is possible:
+
+```ruby
+@posts = Post.sortabl(sort_by: params[:sortabl], default: 'author asc, created_at desc')
+```
+
+#### Limeted Attributes
 
 Permitted values can be an attribute of model class, followed by `_asc` or `_desc`. For example: `sort: :author_asc`
 If there's an attribute permitted which doesn't exist in model, it falls back to sort by `default` key. Attributes can be limited with `only` and `except`. For example:
@@ -35,6 +45,8 @@ If there's an attribute permitted which doesn't exist in model, it falls back to
 
 
 ### View
+
+#### Link Helper
 
 There's also a link helper, which generates needed urls. It works just like you would expect from rails default link_to helper. But instead of hand over a path, just place the desired column name. The helper will do the rest for you:
 
@@ -66,9 +78,9 @@ There's also a link helper, which generates needed urls. It works just like you 
 This link helper can be placed anywhere in the view. There is no need, that it has to be placed in table head. Furthermore you can use `sortabl_link` as block too.
 
 ```erb
-	<%= sortabl_link :author, id: 'author-column', class: 'author-column' do %>
-		<p>Author</p>
-	<% end %>
+<%= sortabl_link :author, id: 'author-column', class: 'author-column' do %>
+	<p>Author</p>
+<% end %>
 ```
 
 #### Parameter
@@ -77,7 +89,7 @@ By default, `sortabl_link` will generate `:sortabl` as parameter into the url. I
 
 ```ruby
 # In view
-<%= sortabl_link 'Author', :author, id: 'author-column', class: 'author-column', sort_param: :my_custom_sort_param %>
+<%= sortabl_link 'Author', :author, sort_param: :my_custom_sort_param %>
 
 # In controller
 @posts = Post.sortabl(sort_by: params[:my_custom_sort_param], only: [:title, :author])

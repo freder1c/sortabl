@@ -6,6 +6,7 @@ module Sortabl
 			#
 			def sortabl_link(name = nil, attribute = nil, html_options = nil, &block)
 				html_options, attribute, name = attribute, name, block if block_given?
+				html_options = html_options || {}
 
 				# Support custom sort_param
 				# If sort_param isn't given, fall back to :sortabl as param

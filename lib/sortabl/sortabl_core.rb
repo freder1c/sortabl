@@ -50,7 +50,7 @@ module Sortabl
 					end
 
 					# Order class object
-					order((sort_params[args[0][:sort_by]] or "#{order_by_default} asc"))
+					order((sort_params[args[0][:sort_by]] or order_by_default))
 				end
 
 			end
