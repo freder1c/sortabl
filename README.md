@@ -36,12 +36,12 @@ If there's an attribute permitted which doesn't exist in model, it falls back to
 
 ### View
 
-There's also a view helper for rendering table heads:
+There's also a link helper, which generates needed urls. It works just like you would expect from rails default link_to helper. But instead of hand over a path, just place the desired column name. The helper will do the rest for you:
 
 ```erb
 <table>
 	<thead>
-		<%= sortabl_th 'Author', :author, id: 'author-column', class: 'author-column' %>
+		<th><%= sortabl_link 'Author', :author, id: 'author-column', class: 'author-column' %></th>
 	</thead>
 	<tbody>
 		...
@@ -51,11 +51,11 @@ There's also a view helper for rendering table heads:
 # Will be rendered to:
 <table>
 	<thead>
-		<th id="author-column" class="sortabl author-column"><a href="/posts?sortabl=author_asc">Author<i class="fa fa-sort"></i></a></th>
+		<th><a id="author-column" class="sortabl author-column" href="/posts?sortabl=author_asc">Author</a></th>
 		# or
-		<th id="author-column" class="sortabl asc author-column"><a href="/posts?sortabl=author_desc">Author<i class="fa fa-sort-asc"></i></a></th>
+		<th><a id="author-column" class="sortabl asc author-column" href="/posts?sortabl=author_desc">Author</a></th>
 		# or
-		<th id="author-column" class="sortabl desc author-column"><a href="/posts">Author<i class="fa fa-sort-desc"></i></a></th>
+		<th><a id="author-column" class="sortabl desc author-column" href="/posts">Author</a></th>
 	</thead>
 	<tbody>
 		...
@@ -63,20 +63,27 @@ There's also a view helper for rendering table heads:
 </table>
 ```
 
+This link helper can be placed anywhere in the view. There is no need, that it has to be placed in table head. Furthermore you can use `sortabl_link` as block too.
+
+```erb
+	<%= sortabl_link :author, id: 'author-column', class: 'author-column' do %>
+		<p>Author</p>
+	<% end %>
+```
+
 #### Parameter
 
-By default, the ViewHelper will generate `:sortabl` as parameter. If you need to change name of the parameter, you can do so by simply:
+By default, `sortabl_link` will generate `:sortabl` as parameter into the url. If you need to change name of the parameter, you can do so by simply:
 
 ```ruby
 # In view
-<%= sortabl_th 'Author', :author, id: 'author-column', class: 'author-column', sort_param: :my_custom_sort_param %>
+<%= sortabl_link 'Author', :author, id: 'author-column', class: 'author-column', sort_param: :my_custom_sort_param %>
 
 # In controller
 @posts = Post.sortabl(sort_by: params[:my_custom_sort_param], only: [:title, :author])
 ```
 
 Which hyperlink will be rendered, depends on permitted values.
-For now, this gem uses [font-awesome-rails](https://github.com/bokmann/font-awesome-rails) for placing icons. So you may want to install font-awesome gem to your project as well. More icon libaries will be supported in future.
 Gem works also fine with pagination like [will_paginate](https://github.com/mislav/will_paginate).
 
 Happy sorting ;)

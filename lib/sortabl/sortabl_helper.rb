@@ -2,49 +2,41 @@ module Sortabl
 	module ActionViewExtensions
 		module SortablHelper
 
-			# Renders table head
-			# Uses fontawesome as default icons
-			# <th 'data-sortable': 'attribute_direction'>Name <i class='fa fa-...'></th>
+			# Renders sortabl link
 			#
-			def sortabl_th name, attribute, *args
+			def sortabl_link(name = nil, attribute = nil, html_options = nil, &block)
+				html_options, attribute, name = attribute, name, block if block_given?
 
 				# Support custom sort_param
 				# If sort_param isn't given, fall back to :sortabl as param
-				sort_by = args[0][:sort_param] || :sortabl
+				sort_param = html_options[:sort_param] || :sortabl
+				html_options.except!(:sort_param)
 
-				# To provide full path with all given params
-				# make a copy of incoming params and override sort_param only
-				sort_params = params.except(sort_by)
+				# Remove current sortabl param from url and add default sortabl param
+				sortabl_params = params.except(sort_param)
+				sortabl_params[sort_param] = "#{attribute}_asc"
 
-				# Set default sort path
-				sort_params[sort_by] = "#{attribute}_asc"
+				# If there was already a sortabl param, invert direction or remove sortabl param
+				if params[sort_param].present?
+					if attribute.to_s == params[sort_param].gsub(/(_asc$|_desc$)/, '')
+						sort_direction = params[sort_param].gsub(/^((?!desc$|asc$).)*/, '')
 
-				# if there is already a sort param set, invert or remove sort direction
-				if params[sort_by].present?
-
-					# if sort param match current attribute, change direction
-					if attribute.to_s == params[sort_by].gsub(/(_asc$|_desc$)/, '')
-
-						sort_direction = params[sort_by].gsub(/^((?!desc$|asc$).)*/, '')
-
-						sort_params[sort_by] = "#{attribute}_desc" 	if sort_direction == 'asc'
-						sort_params[sort_by] = nil 									if sort_direction == 'desc'
-
+						sortabl_params[sort_param] = "#{attribute}_desc" 	if sort_direction == 'asc'
+						sortabl_params[sort_param] = nil 									if sort_direction == 'desc'
 					end
 				end
 
-				# Get element id and classes
-				th_id = args[0][:id] if args.present? and args[0][:id].present?
-				th_class = args[0][:class] if args.present? and args[0][:class].present?
+				# Add sortabl html class to html_options
+				html_options[:class] = 'sortabl' + (sort_direction.present? ? " #{sort_direction}" : "") + (html_options[:class].present? ? " #{html_options[:class]}" : "")
 
-				# Generate HTML Code
-				html = <<-HTML
-			    <th #{"id=#{th_id}" if th_id.present?} class="sortabl#{sort_direction.present? ? " #{sort_direction}" : ""}#{" #{th_class}" if th_class.present?}" #{args[0].map{ |k,v| "#{k}='#{v}'" unless (k.to_s =~ /^data-(.*)$/).nil? }.join(' ') if args.present?}>
-			    	<a href='#{url_for(sort_params)}'>#{name}<i class='fa fa-sort#{sort_direction.present? ? "-#{sort_direction}" : ""}'></i></a>
-			    </td>
-		    HTML
+				# Support remote true
+				html_options.except!(:remote).merge!({'data-remote': 'true'}) if html_options[:remote]
 
-		    html.html_safe
+				# Generate url from params
+				url = url_for(sortabl_params)
+				html_options["href".freeze] ||= url
+
+				content_tag("a".freeze, name || url, html_options, &block)
 			end
 
 		end
