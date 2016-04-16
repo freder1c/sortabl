@@ -1,60 +1,49 @@
 module Sortabl
-	module ActiveRecordExtensions
-		module Sortabl
+  module ActiveRecordExtensions
+    module Sortabl
 
-			extend ActiveSupport::Concern
+      extend ActiveSupport::Concern
 
-			# class Base
-			module ClassMethods
+      # class Base
+      module ClassMethods
 
-				def sortabl *args
-					# Init
-					default = args[0][:default].to_s if args
-					only = args[0][:only]
-					except = args[0][:except]
-					sort_params = {}
+        def sortabl *args
+          # Init
+          default = args[0][:default]
+          only = args[0][:only]
+          except = args[0][:except]
+          parameter = args[0][:sort_by]
 
-					raise "Invalid Parameters: Do not use 'only' and 'except' together!" if only.present? and except.present?
+          raise "Invalid Parameters: Do not use 'only' and 'except' together!" if only.present? and except.present?
 
-					# Set default order attribute
-					# default:
-					#
-					order_by_default = default.present? ? default : self.primary_key
+          # Set default order attribute
+          # default:
+          #
+          order_by_default = default.present? ? default : self.primary_key
 
-					case true
-						# List only attributes
-						# only:
-						#
-						when only.present?
-							(only.map(&:to_s)).each do |attribute|
-								sort_params[attribute + '_asc'] = "#{attribute} asc"
-								sort_params[attribute + '_desc'] = "#{attribute} desc"
-							end
+          # Extract column name and direction from parameter
+          #
+          if parameter.present?
+            column_name = parameter.gsub(/(_asc$|_desc$)/, '')
+            direction = parameter.gsub(/^((?!desc$|asc$).)*/, '')
 
-						# List class attributes without excepts
-						# except:
-						#
-						when except.present?
-							(self.column_names - except.map(&:to_s)).each do |attribute|
-								sort_params[attribute + '_asc'] = "#{attribute} asc"
-								sort_params[attribute + '_desc'] = "#{attribute} desc"
-							end
+            # Sort by default if column_name is not included in only or column_name is included in except
+            #
+            return order((order_by_default)) if only.present? and !only.include? column_name.to_sym
+            return order((order_by_default)) if except.present? and except.include? column_name.to_sym
+          end
 
-						# List class attribtues
-						#
-						else
-							self.column_names.each do |attribute|
-								sort_params[attribute + '_asc'] = "#{attribute} asc"
-								sort_params[attribute + '_desc'] = "#{attribute} desc"
-							end
-					end
+          # Convert param_value to symbol
+          #
+          sort_column = { column_name.to_sym => direction.to_sym } if column_name.present? and direction.present?
 
-					# Order class object
-					order((sort_params[args[0][:sort_by]] or order_by_default))
-				end
+          # Order class object
+          order((sort_column or order_by_default))
+        end
 
-			end
+      end
 
-		end
-	end
+    end
+  end
+end
 end

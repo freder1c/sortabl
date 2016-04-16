@@ -23,13 +23,13 @@ gem 'sortabl'
 And that's it! Records will be sorted by permitted parameter `:sortabl`. If parameter `:sortabl` isn't permitted, records will be sorted by primary key. If you don't want to sort by primary key as default, you can set another one by:
 
 ```ruby
-@posts = Post.sortabl(sort_by: params[:sortabl], default: 'author asc')
+@posts = Post.sortabl(sort_by: params[:sortabl], default: [author: :asc])
 ```
 
 Even default multiple columns sort is possible:
 
 ```ruby
-@posts = Post.sortabl(sort_by: params[:sortabl], default: 'author asc, created_at desc')
+@posts = Post.sortabl(sort_by: params[:sortabl], default: [author: :asc, created_at: :desc])
 ```
 
 #### Limeted Attributes
@@ -52,26 +52,26 @@ There's also a link helper, which generates needed urls. It works just like you 
 
 ```erb
 <table>
-	<thead>
-		<th><%= sortabl_link 'Author', :author, id: 'author-column', class: 'author-column' %></th>
-	</thead>
-	<tbody>
-		...
-	</tbody>
+  <thead>
+    <th><%= sortabl_link 'Author', :author, id: 'author-column', class: 'author-column' %></th>
+  </thead>
+  <tbody>
+    ...
+  </tbody>
 </table>
 
 # Will be rendered to:
 <table>
-	<thead>
-		<th><a id="author-column" class="sortabl author-column" href="/posts?sortabl=author_asc">Author</a></th>
-		# or
-		<th><a id="author-column" class="sortabl asc author-column" href="/posts?sortabl=author_desc">Author</a></th>
-		# or
-		<th><a id="author-column" class="sortabl desc author-column" href="/posts">Author</a></th>
-	</thead>
-	<tbody>
-		...
-	</tbody>
+  <thead>
+    <th><a id="author-column" class="sortabl author-column" href="/posts?sortabl=author_asc">Author</a></th>
+    # or
+    <th><a id="author-column" class="sortabl asc author-column" href="/posts?sortabl=author_desc">Author</a></th>
+    # or
+    <th><a id="author-column" class="sortabl desc author-column" href="/posts">Author</a></th>
+  </thead>
+  <tbody>
+    ...
+  </tbody>
 </table>
 ```
 
@@ -79,7 +79,7 @@ This link helper can be placed anywhere in the view. There is no need, that it h
 
 ```erb
 <%= sortabl_link :author, id: 'author-column', class: 'author-column' do %>
-	<p>Author</p>
+  <p>Author</p>
 <% end %>
 ```
 
