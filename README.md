@@ -17,19 +17,19 @@ gem 'sortabl'
 #### Default
 
 ```ruby
-@posts = Post.sortabl(sort_by: params[:sortabl])
+@posts = Post.sortabl(params[:sortabl])
 ```
 
 And that's it! Records will be sorted by permitted parameter `:sortabl`. If parameter `:sortabl` isn't permitted, records will be sorted by primary key. If you don't want to sort by primary key as default, you can set another one by:
 
 ```ruby
-@posts = Post.sortabl(sort_by: params[:sortabl], default: [author: :asc])
+@posts = Post.sortabl(params[:sortabl], default: [author: :asc])
 ```
 
 Even default multiple columns sort is possible:
 
 ```ruby
-@posts = Post.sortabl(sort_by: params[:sortabl], default: [author: :asc, created_at: :desc])
+@posts = Post.sortabl(params[:sortabl], default: [author: :asc, created_at: :desc])
 ```
 
 #### Limeted Attributes
@@ -38,9 +38,9 @@ Permitted values can be an attribute of model class, followed by `_asc` or `_des
 If there's an attribute permitted which doesn't exist in model, it falls back to sort by `default` key. Attributes can be limited with `only` and `except`. For example:
 
 ```ruby
-@posts = Post.sortabl(sort_by: params[:sortabl], only: [:title, :author])
+@posts = Post.sortabl(params[:sortabl], only: [:title, :author])
 # or
-@posts = Post.sortabl(sort_by: params[:sortabl], except: [:text])
+@posts = Post.sortabl(params[:sortabl], except: [:text])
 ```
 
 
@@ -92,7 +92,7 @@ By default, `sortabl_link` will generate `:sortabl` as parameter into the url. I
 <%= sortabl_link 'Author', :author, sort_param: :my_custom_sort_param %>
 
 # In controller
-@posts = Post.sortabl(sort_by: params[:my_custom_sort_param], only: [:title, :author])
+@posts = Post.sortabl(params[:my_custom_sort_param], only: [:title, :author])
 ```
 
 Which hyperlink will be rendered, depends on permitted values.
