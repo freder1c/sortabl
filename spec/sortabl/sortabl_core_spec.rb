@@ -8,7 +8,7 @@ require 'pry'
 describe Sortabl do
 
   before(:all) do
-    @connection = ActiveRecord::Base.establish_connection :adapter => 'sqlite3', database: ':memory:'
+    @connection = ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
     CreateSortablRecords.setup
     CreateSortablRecords.seed
   end

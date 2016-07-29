@@ -15,7 +15,7 @@ module Sortabl
             except = args[0][:except]
           end
 
-          raise ArgumentError.new("Invalid Parameters: Do not use 'only' and 'except' together!") if only.present? and except.present?
+          raise ArgumentError.new("Do not use 'only' and 'except' together!") if only.present? and except.present?
 
           # Set default order attribute
           # default:
