@@ -5,5 +5,5 @@ require "sortabl/sortabl_helper"
 # Extend ActiveRecord's functionality
 ActiveRecord::Base.send :include, Sortabl::ActiveRecordExtensions::Sortabl
 
-# You can do this here or in a Railtie
+# Extend ActionViews's functionality
 ActionView::Base.send :include, Sortabl::ActionViewExtensions::SortablHelper

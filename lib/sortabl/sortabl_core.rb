@@ -31,8 +31,16 @@ module Sortabl
             return order((order_by_default)) if except.present? and except.include? column_name.to_sym
           end
 
-          # Convert param_value to symbol
-          sort_column = { column_name.to_sym => direction.to_sym } if column_name.present? and direction.present?
+          if column_name.present? and direction.present?
+            if column_name.include? "."
+              # Sort by associated column
+              # Note: alias attributes not supported yet
+              sort_column = "#{column_name} #{direction}"
+            else
+              # Convert param_value to symbol to support alias attributes
+              sort_column = { column_name.to_sym => direction.to_sym }
+            end
+          end
 
           # Order class object
           order((sort_column or order_by_default))
